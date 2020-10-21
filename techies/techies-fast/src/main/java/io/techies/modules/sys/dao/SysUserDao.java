@@ -1,0 +1,39 @@
+/**
+ * Copyright (c) 2016-2100 Techies-RG All rights reserved.
+ *
+ * 版权所有，侵权必究！
+ */
+
+package io.techies.modules.sys.dao;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.techies.modules.sys.entity.SysUserEntity;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+
+/**
+ * 系统用户
+ *
+ * @author Techies-RG
+ */
+@Mapper
+public interface SysUserDao extends BaseMapper<SysUserEntity> {
+	
+	/**
+	 * 查询用户的所有权限
+	 * @param userId  用户ID
+	 */
+	List<String> queryAllPerms(Long userId);
+	
+	/**
+	 * 查询用户的所有菜单ID
+	 */
+	List<Long> queryAllMenuId(Long userId);
+	
+	/**
+	 * 根据用户名，查询系统用户
+	 */
+	SysUserEntity queryByUserName(String username);
+
+}

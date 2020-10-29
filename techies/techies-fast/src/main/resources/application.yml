@@ -37,6 +37,9 @@ spring:
         min-idle: 5       # 连接池中的最小空闲连接
   mvc:
     throw-exception-if-no-handler-found: true
+    static-path-pattern: /static/**
+  resources:
+    static-locations: classpath:/static/
 #  resources:
 #    add-mappings: false
 
@@ -45,7 +48,7 @@ spring:
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
   #实体扫描，多个package用逗号或者分号分隔
-  typeAliasesPackage: io.techies.modules.*.entity
+  typeAliasesPackage: io.techies.modules.*.entity,io.techies.modules.*.*.entity
   global-config:
     #数据库相关配置
     db-config:
@@ -74,3 +77,6 @@ techies:
     # token有效时长，7天，单位秒
     expire: 604800
     header: token
+upload:
+  product: static/upload/product/
+

@@ -8,10 +8,7 @@ package io.techies.modules.oss.controller;
 
 import com.google.gson.Gson;
 import io.techies.common.exception.RRException;
-import io.techies.common.utils.ConfigConstant;
-import io.techies.common.utils.Constant;
-import io.techies.common.utils.PageUtils;
-import io.techies.common.utils.R;
+import io.techies.common.utils.*;
 import io.techies.common.validator.ValidatorUtils;
 import io.techies.common.validator.group.AliyunGroup;
 import io.techies.common.validator.group.QcloudGroup;
@@ -21,11 +18,15 @@ import io.techies.modules.oss.cloud.OSSFactory;
 import io.techies.modules.oss.entity.SysOssEntity;
 import io.techies.modules.oss.service.SysOssService;
 import io.techies.modules.sys.service.SysConfigService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -35,9 +36,14 @@ import java.util.Map;
  *
  * @author Techies-RG
  */
+@Slf4j
 @RestController
 @RequestMapping("sys/oss")
 public class SysOssController {
+
+	@Value("${upload.product}")
+	private String uploadpath;
+
 	@Autowired
 	private SysOssService sysOssService;
     @Autowired
@@ -101,21 +107,46 @@ public class SysOssController {
 	@PostMapping("/upload")
 	@RequiresPermissions("sys:oss:all")
 	public R upload(@RequestParam("file") MultipartFile file) throws Exception {
-		if (file.isEmpty()) {
+		if (file == null || file.isEmpty()) {
 			throw new RRException("上传文件不能为空");
 		}
 
-		//上传文件
+		String path = ResourceUtils.getURL("classpath:").getPath()+uploadpath;
+//		String realPath = path.replace('/', '\\').substring(1,path.length());
+		//用于查看路径是否正确
+		log.debug(path);
+
+		//获取文件的名称
+		final String fileName = StringUtils.getUUID();
 		String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-		String url = OSSFactory.build().uploadSuffix(file.getBytes(), suffix);
+
+		//限制文件上传的类型
+		String contentType = file.getContentType();
+		if("image/jpeg".equals(contentType) || "image/jpg".equals(contentType) || "image/gif".equals(contentType) || "image/png".equals(contentType) ){
+
+			File filePath= new File(path);
+			if(!filePath.exists()){
+				filePath.mkdirs();
+			}
+
+			File newFile = new File(path,fileName+suffix);
+
+			//完成文件的上传
+			file.transferTo(newFile);
+			log.debug("图片上传成功!");
+		}else {
+			throw new RRException("无法上传"+contentType+"格式");
+		}
+
 
 		//保存文件信息
-		SysOssEntity ossEntity = new SysOssEntity();
-		ossEntity.setUrl(url);
-		ossEntity.setCreateDate(new Date());
-		sysOssService.save(ossEntity);
+//		SysOssEntity ossEntity = new SysOssEntity();
+//		ossEntity.setUrl(url);
+//		ossEntity.setCreateDate(new Date());
+//		sysOssService.save(ossEntity);
 
-		return R.ok().put("url", url);
+		log.debug(fileName);
+		return R.ok().put("fileName",fileName+suffix);
 	}
 
 

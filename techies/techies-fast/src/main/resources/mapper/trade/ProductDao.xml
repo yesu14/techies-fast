@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.techies.modules.trade.product.dao.ProductDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.techies.modules.trade.product.entity.ProductEntity" id="productMap">
+        <result property="id" column="id"/>
+        <result property="productName" column="product_name"/>
+        <result property="productCode" column="product_code"/>
+        <result property="koreanLink" column="korean_link"/>
+        <result property="chineseLink" column="chinese_link"/>
+        <result property="price" column="price"/>
+        <result property="picture" column="picture"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="username" column="username"/>
+    </resultMap>
+
+
+</mapper>

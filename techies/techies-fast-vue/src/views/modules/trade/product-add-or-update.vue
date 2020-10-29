@@ -85,6 +85,9 @@
                 this.dataForm.chineseLink = data.product.chineseLink
                 this.dataForm.price = data.product.price
                 this.dataForm.picture = data.product.picture
+                let imgUrl = this.$http.adornUrl('/static/upload/product/')
+                let token = this.$cookie.get('token')
+                this.imageUrl = imgUrl + data.product.picture + '?token=' + token
               }
             })
           }
